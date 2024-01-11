@@ -32,6 +32,14 @@
 #     loop_var: version_item
 #   when: mongodb_package == 'mongodb-org'
 
+- name: install | dependencies
+  apt:
+    name: 
+      - gnupg
+      - python3-dev
+      - python3-pip
+    update_cache: true
+
 - name: install | gpg key
   ansible.builtin.get_url:
     url: "https://pgp.mongodb.com/server-{{ mongodb_version }}.asc"
