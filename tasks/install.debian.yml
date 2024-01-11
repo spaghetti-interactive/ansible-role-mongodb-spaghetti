@@ -9,28 +9,44 @@
     - mongodb_disable_transparent_hugepages | bool
     - ansible_service_mgr == "systemd"
 
-- name: Add APT key
-  apt_key:
-    keyserver: "{{ mongodb_apt_keyserver if not mongodb_apt_key_from_url|bool else omit }}"
-    url: "{{ mongodb_apt_key_url[mongodb_major_version] if mongodb_apt_key_from_url|bool else omit }}"
-    id: "{{ mongodb_apt_key_id[mongodb_major_version] }}"
-  when: mongodb_package == 'mongodb-org'
+# - name: Add APT key
+#   apt_key:
+#     keyserver: "{{ mongodb_apt_keyserver if not mongodb_apt_key_from_url|bool else omit }}"
+#     url: "{{ mongodb_apt_key_url[mongodb_major_version] if mongodb_apt_key_from_url|bool else omit }}"
+#     id: "{{ mongodb_apt_key_id[mongodb_major_version] }}"
+#   when: mongodb_package == 'mongodb-org'
 
-- name: Fail when used wrong mongodb_version variable
-  fail:
-    msg: "mongodb_version variable should be '3.6' or '4.0', '4.2' or '4.4'"
-  when: (mongodb_package == 'mongodb-org' and
-        (mongodb_version is not defined
-         or mongodb_repository[mongodb_major_version] is not defined))
+# - name: Fail when used wrong mongodb_version variable
+#   fail:
+#     msg: "mongodb_version variable should be '3.6' or '4.0', '4.2' or '4.4'"
+#   when: (mongodb_package == 'mongodb-org' and
+#         (mongodb_version is not defined
+#          or mongodb_repository[mongodb_major_version] is not defined))
 
-- name: Add APT repository
+# - name: Add APT repository
+#   apt_repository:
+#     repo: "{{ mongodb_repository[version_item] }}"
+#     update_cache: true
+#   with_items: "{{ mongodb_major_version }}"
+#   loop_control:
+#     loop_var: version_item
+#   when: mongodb_package == 'mongodb-org'
+
+- name: install | gpg key
+  ansible.builtin.get_url:
+    url: "https://pgp.mongodb.com/server-{{ mongodb_version }}.asc"
+    dest: "/etc/apt/keyrings/mongo_{{ mongodb_version }}.asc"
+    mode: 0644
+
+- name: install | repo
   apt_repository:
-    repo: "{{ mongodb_repository[version_item] }}"
-    update_cache: true
-  with_items: "{{ mongodb_major_version }}"
-  loop_control:
-    loop_var: version_item
-  when: mongodb_package == 'mongodb-org'
+    repo: >-
+      deb [
+       arch=amd64,arm64
+       signed-by=/etc/apt/keyrings/mongo_{{- mongodb_version }}.asc ]
+      https://repo.mongodb.org/apt/ubuntu jammy/mongodb-org/{{ mongodb_version }}
+      multiverse
+    filename: "{{ mongodb_package }}-{{ mongodb_version }}"
 
 - name: Install MongoDB package
   apt:
