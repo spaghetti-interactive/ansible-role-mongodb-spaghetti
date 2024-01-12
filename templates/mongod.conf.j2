@@ -7,9 +7,7 @@ net:
     enabled: {{ mongodb_net_http_enabled | to_nice_json }}
   {% endif -%}
   ipv6: {{ mongodb_net_ipv6 | to_nice_json }}
-  {% if mongodb_net_maxconns is defined -%}
   maxIncomingConnections: {{ mongodb_net_maxconns }}
-  {%- endif %}
   port: {{ mongodb_net_port }}
   {% if mongodb_net_ssl_pemfile is defined and mongodb_net_ssl_mode is defined and mongodb_net_ssl == 'enabled' -%}
   ssl:
