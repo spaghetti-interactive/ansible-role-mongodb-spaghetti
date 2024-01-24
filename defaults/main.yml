@@ -50,6 +50,9 @@ mongodb_net_ssl_host: ""                         # Valid ssl hostname
 # Enabled by default for RedHat as the init scripts assume forking is enabled.
 mongodb_processmanagement_fork: "{{ 'RedHat' == ansible_os_family }}"
 
+mongodb_pidfile_folder: /var/run/mongodb
+mongodb_pidfile_path: '{{ mongodb_pidfile_folder }}/mongod.pid'
+
 ## security Options
 # Disable or enable security. Possible values: 'disabled', 'enabled'
 mongodb_security_authorization: "disabled"
