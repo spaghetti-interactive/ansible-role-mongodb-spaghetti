@@ -6,6 +6,8 @@ After=network-online.target
 
 [Service]
 User={{ mongodb_user }}
+ExecStartPre=/bin/mkdir -p {{ mongodb_pidfile_folder }}
+ExecStartPre=/bin/chown {{ mongodb_user }}:{{ mongodb_user }} {{ mongodb_pidfile_folder }}
 {% if mongodb_use_numa | bool %}
 ExecStart=/usr/bin/numactl --interleave=all /usr/bin/mongod --config /etc/mongod.conf
 {% else %}

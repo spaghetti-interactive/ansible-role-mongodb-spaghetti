@@ -71,15 +71,6 @@
     recurse: true
     follow: true
     
-- name: Ensure pid folder directory
-  file:
-    path: "{{ mongodb_pidfile_folder }}"
-    state: directory
-    owner: "{{ mongodb_user }}"
-    group: "{{ mongodb_user }}"
-    recurse: true
-    follow: true
-
 - name: Configure mongodb
   template:
     src: mongod.conf.j2
