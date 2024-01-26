@@ -7,6 +7,7 @@ After=network-online.target
 [Service]
 User={{ mongodb_user }}
 RuntimeDirectory=mongodb
+RuntimeDirectoryMode=0775
 {% if mongodb_use_numa | bool %}
 ExecStart=/usr/bin/numactl --interleave=all /usr/bin/mongod --config /etc/mongod.conf
 {% else %}
